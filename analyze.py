@@ -1,13 +1,14 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn import cross_validation
+from sklearn.model_selection import train_test_split
 from sklearn import linear_model
 from sklearn.metrics import mean_squared_error
 from sklearn.ensemble import GradientBoostingRegressor
 
-data=pd.read_csv('C:\\Users\\alex314\\Desktop\\CraigslistProject\\craigslist_data.csv')
+data=pd.read_csv('craigslist_data.csv')
 data=data.dropna()
 
 fig = plt.figure()
@@ -52,7 +53,7 @@ features = ['latitude', 'longitude', 'footage','num_br', 'num_ba']
 X = data[features]
 Y = data['price']
 
-Xtrain, Xtest, Ytrain, Ytest = cross_validation.train_test_split(
+Xtrain, Xtest, Ytrain, Ytest = train_test_split(
         X, Y, test_size=0.05, random_state=777)
 
 #Gradient boosting model           
@@ -73,7 +74,7 @@ print "Mean Absolute Percentage Error:", round(MeanAPE_test,5) * 100, "%"
 print "Percentage of predictions with error below 10%:", round(percent, 4) * 100, "%"
 print "Root MSE on train set: %s, Root MSE on test set: %s" \
         %(round(RMSEs_boost[0], 1),round(RMSEs_boost[1], 1))
-print "R-square is %s" %(round(r2_score(Ytest,boost.predict(Xtest)), 4) * 100),"%"
+#print "R-square is %s" %(round(r2_score(Ytest,boost.predict(Xtest)), 4) * 100),"%"
 
 featImportances = boost.feature_importances_
 pos = np.arange(len(features))

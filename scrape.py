@@ -1,6 +1,6 @@
 #Scrapes data from apartment and condo listings from Craigslist website
 from bs4 import BeautifulSoup
-import MySQLdb 
+#import MySQLdb 
 from sqlalchemy import create_engine
 import pandas as pd
 from pandas.io import sql
@@ -23,7 +23,7 @@ class Scraper:
                                       'type',
                                       'url'])
                                       
-        self.conn = MySQLdb.connect(user="root", passwd="mysql", db="apts")
+        #self.conn = MySQLdb.connect(user="root", passwd="mysql", db="apts")
         self.table = "scraped"
         self.url_root = "http://" + region + ".craigslist.org"
         self.region = region
@@ -47,6 +47,7 @@ class Scraper:
         if bsObj.find(id = "map"):
             latitude = bsObj.find(id = "map").attrs['data-latitude']
             longitude = bsObj.find(id = "map").attrs['data-longitude']
+            print latitude, longitude
         
             return latitude, longitude
         else:
@@ -108,13 +109,15 @@ class Scraper:
         #url = self.url_root + "/search/apa?s=" + str(page_index) + ".html"
         url = self.url_root + "/search/apa?s="+ str(page_index)+\
                     "&housing_type=1&housing_type=2"
+        print url
         html = urllib2.urlopen(url)
-        bsObj = BeautifulSoup(html)
-        rows = bsObj.find_all("p", class_="row")
+        bsObj = BeautifulSoup(html, "html.parser")
+        rows = bsObj.find_all("li", class_="result-row")
         
         for row in rows:
             try:
-                price_tag = row.find("span", class_="price")
+                price_tag = row.find("span", class_="result-price")
+                print price_tag
                 
                 if price_tag:
 
@@ -149,7 +152,7 @@ class Scraper:
                                             'footage':footage,
                                             'num_ba':num_ba,
                                             'num_br':num_br,
-                                            'url':apt_link,
+                                            'url':self.url_root + apt_link,
                                             'type':type_apt}])
                                                 
                         self.df = self.df.append(df_row, ignore_index=True)
@@ -167,24 +170,26 @@ class Scraper:
             create_or_add - 'create' or 'add'. 
         '''
             
-        if create_or_add == 'create':
-            self.df.to_sql(con=self.conn, name=self.table, 
-                       if_exists='replace', flavor='mysql')
+        #if create_or_add == 'create':
+            #self.df.to_sql(con=self.conn, name=self.table, 
+            #           if_exists='replace', flavor='mysql')
             
-        elif create_or_add == 'add':
-            self.df.to_sql(con=self.conn, name=self.table, 
-                       if_exists='add', flavor='mysql')
-        else:
-            raise ValueError("Please provide 'create' or 'add'")
+        #elif create_or_add == 'add':
+        #    self.df.to_sql(con=self.conn, name=self.table, 
+        #               if_exists='add', flavor='mysql')
+        #else:
+        #    raise ValueError("Please provide 'create' or 'add'")
         
 
-s = Scraper("washingtondc")
-s.scrape(0,2500)
+s = Scraper("sfbay")
+#s.scrape(0,2500)
+s.scrape(0,100)
 
-s.df.to_csv('C:\\Users\\alex314\\Desktop\\CraigslistProject\\craigslist_data.csv')
+
+s.df.to_csv('craigslist_data.csv')
 
 
-engine = create_engine('mysql://root:mysql@localhost/apts', echo=False)
-result.to_sql('load_data', engine, if_exists='replace')
+#engine = create_engine('mysql://root:mysql@localhost/apts', echo=False)
+#result.to_sql('load_data', engine, if_exists='replace')
 
-s.df.to_sql(con=s.conn, name=s.table, if_exists='replace', flavor='mysql')
+#s.df.to_sql(con=s.conn, name=s.table, if_exists='replace', flavor='mysql')
