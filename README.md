@@ -13,7 +13,9 @@ sudo apt install python-mysqldb
 
 	python scrape.py
 
-Then it'll pound craigslist with a few thousand HTTP requests... A few minutes later (if it didn't break) it'll spit out a csv file. craigslist_data.csv
+Then it'll pound craigslist with a few thousand HTTP requests... So don't run this script.
+
+A few minutes later (if it didn't break) it'll spit out a csv file. craigslist_data.csv
 
 	python analyze.py
 
