@@ -17,4 +17,4 @@ Then it'll pound craigslist with a few thousand HTTP requests... A few minutes l
 
 	python analyze.py
 
-Now this will churn through that csv file doing stuff that I don't really understand. How does it work, alex3140?
+Now this will churn through that csv file and spit out some results
